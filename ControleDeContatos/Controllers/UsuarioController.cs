@@ -1,4 +1,5 @@
-﻿using ControleDeContatos.Models;
+﻿using ControleDeContatos.Filters;
+using ControleDeContatos.Models;
 using ControleDeContatos.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace ControleDeContatos.Controllers
 {
+    [PaginaParaUsuarioLogado]
+    [PaginaRestritaSomenteAdmin]
     public class UsuarioController : Controller
     {
         private readonly IUsuarioRepository _usuarioRepository;
