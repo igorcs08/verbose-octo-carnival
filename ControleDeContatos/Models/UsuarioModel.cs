@@ -1,10 +1,7 @@
 ﻿using ControleDeContatos.Enums;
 using ControleDeContatos.Helper;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ControleDeContatos.Models
 {
@@ -33,6 +30,13 @@ namespace ControleDeContatos.Models
         public void SetSenhaHash()
         {
             Senha = Senha.GerarHash();
+        }
+
+        public string GerarNovaSenha()
+        {
+            string novaSenha = Guid.NewGuid().ToString().Substring(0, 8);
+            Senha = novaSenha.GerarHash();
+            return novaSenha;
         }
     }
 }
