@@ -13,11 +13,14 @@ namespace ControleDeContatos.Controllers
     {
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly ISessao _sessao;
+        private readonly IEmail _email;
         public LoginController(IUsuarioRepository usuarioRepository,
-                               ISessao sessao)
+                               ISessao sessao,
+                               IEmail email)
         {
             _usuarioRepository = usuarioRepository;
             _sessao = sessao;
+            _email = email;
         }
         public IActionResult Index()
         {
@@ -74,8 +77,21 @@ namespace ControleDeContatos.Controllers
 
                     if (usuario != null)
                     {
-                        string novaSenha = usuario.GerarNovaSenha();
-                        TempData["MensagemSucesso"] = $"Enviamos para seu e-mail cadastrado uma nova senha.";
+                        string novaSenha = usuario.GerarNovaSenha();                        
+                        string mensagem = $"Sua nova senha é: {novaSenha}";
+
+                        bool emailEnviado = _email.Enviar(usuario.Email, "Sistema de Contatos - Nova Senha", mensagem);
+
+                        if (emailEnviado)
+                        {
+                            _usuarioRepository.Atualizar(usuario);
+                            TempData["MensagemSucesso"] = $"Enviamos para seu e-mail cadastrado uma nova senha.";
+                        }
+                        else
+                        {
+                            TempData["MensagemErro"] = $"Não conseguimos enviar o e-mail. Por favor, tente novamente.";
+                        }
+
                         return RedirectToAction("Index", "Login");
                     }
                     TempData["MensagemErro"] = $"Não conseguimos redefinir sua senha.";
